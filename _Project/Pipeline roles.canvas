@@ -1,0 +1,228 @@
+{
+  "nodes": [
+    {
+      "id": "bd55fcad1edf1f1e",
+      "type": "group",
+      "x": 460,
+      "y": -60,
+      "width": 1260,
+      "height": 1000,
+      "label": "Roles",
+      "color": "6"
+    },
+    {
+      "id": "3e1c26d323ef323e",
+      "type": "group",
+      "x": -60,
+      "y": -60,
+      "width": 460,
+      "height": 1000,
+      "label": "Control (runs by itself)",
+      "color": "5"
+    },
+    {
+      "id": "e848f808f54d35bf",
+      "type": "text",
+      "x": 0,
+      "y": -260,
+      "width": 1300,
+      "height": 150,
+      "text": "# Clipping pipeline: automated roles\nEach role is one small Python worker. They share one job table (SQLite) and take turns on one model server (8 GB GPU). The Task Scheduler starts them; no Claude session is needed to run. Build order is the number in each title.",
+      "color": "5"
+    },
+    {
+      "id": "9cf342ca060bb525",
+      "type": "text",
+      "x": 0,
+      "y": 0,
+      "width": 340,
+      "height": 240,
+      "text": "## 1. Scheduler + supervisor\nWindows Task Scheduler starts `run_all.py` nightly or at logon.\nRuns the roles in order, retries, writes `STOP` on a block, optional Telegram message.\n\n**Status:** not built",
+      "color": "2"
+    },
+    {
+      "id": "72775666ffa64239",
+      "type": "text",
+      "x": 0,
+      "y": 300,
+      "width": 340,
+      "height": 260,
+      "text": "## 2. Job table (SQLite)\nOne row per task: role, input, status (todo / doing / done / failed), result, time.\nAlready in use: `clips.db`, `done.txt`, `failed.tsv`.\n\n**Status:** partly (clips.db exists)",
+      "color": "3"
+    },
+    {
+      "id": "b3b3406c2f2b3f2c",
+      "type": "text",
+      "x": 0,
+      "y": 620,
+      "width": 340,
+      "height": 260,
+      "text": "## 3. Model server (Ollama)\nOne model in VRAM at a time: a 7B vision model for reading sheets, a 7-8B text model for the rest. Whisper takes its turn too.\n\n**Status:** not built (needs install)",
+      "color": "2"
+    },
+    {
+      "id": "e0ed9827a6c38ad2",
+      "type": "text",
+      "x": 500,
+      "y": 0,
+      "width": 360,
+      "height": 230,
+      "text": "## Scout\nFinds streamers and clips, stores metadata (views, length, channel). yt-dlp only.\n**Model:** none\n**Status:** built (`build_db.py`)",
+      "color": "4"
+    },
+    {
+      "id": "cae64fa6587c2e15",
+      "type": "text",
+      "x": 920,
+      "y": 0,
+      "width": 360,
+      "height": 230,
+      "text": "## 4. Analyst\nDownloads, measures audio and frames, makes the contact sheet, then reads it: hook, layout, captions, structure.\n**Model:** vision\n**Status:** measuring built (`cycle.py`), reader not built",
+      "color": "3"
+    },
+    {
+      "id": "14646e57e3b99c58",
+      "type": "text",
+      "x": 1340,
+      "y": 0,
+      "width": 340,
+      "height": 230,
+      "text": "## 5. Researcher\nFetches a watchlist of pages (rates, payout rules, circulars), diffs against last copy, extracts numbers.\n**Model:** text\n**Status:** not built",
+      "color": "2"
+    },
+    {
+      "id": "44ee9bd73b53690a",
+      "type": "text",
+      "x": 500,
+      "y": 300,
+      "width": 360,
+      "height": 230,
+      "text": "## 6. Strategist\nWeekly summary from the database: what works per streamer, trends, what changed in the market.\n**Model:** text\n**Status:** done by hand (me), not automated",
+      "color": "2"
+    },
+    {
+      "id": "0cb69ab7f5a0d02e",
+      "type": "text",
+      "x": 920,
+      "y": 300,
+      "width": 360,
+      "height": 230,
+      "text": "## 7. Scriptwriter\nDrafts hooks, titles and caption text from the winning patterns.\n**Model:** text (quality is average with a 7B model)\n**Status:** not built",
+      "color": "2"
+    },
+    {
+      "id": "f9e20aa751c7987e",
+      "type": "text",
+      "x": 1340,
+      "y": 300,
+      "width": 340,
+      "height": 230,
+      "text": "## 8. Editor\nFinds moments in a stream, cuts, reframes to vertical, adds captions. ffmpeg, Whisper, face tracking.\n**Model:** mostly none\n**Status:** not built",
+      "color": "2"
+    },
+    {
+      "id": "2ddbd20899e47610",
+      "type": "text",
+      "x": 500,
+      "y": 600,
+      "width": 360,
+      "height": 230,
+      "text": "## Reviewer\nChecks every output against your rules and spot-checks the reader against the clips Claude read by eye. Flags weak ones.\n**Model:** text\n**Status:** not built",
+      "color": "2"
+    },
+    {
+      "id": "8d4fc201ee9d4b09",
+      "type": "text",
+      "x": 920,
+      "y": 600,
+      "width": 360,
+      "height": 230,
+      "text": "## You (approval gate)\nReads the weekly review file, approves, publishes by hand. Posting stays manual or human-approved.\nRights to the footage are still your open decision.",
+      "color": "6"
+    },
+    {
+      "id": "bbae4d5faf6d3939",
+      "type": "text",
+      "x": 1340,
+      "y": 600,
+      "width": 340,
+      "height": 230,
+      "text": "## Legend\nGreen = built\nYellow = partly built\nOrange = not built\nCyan = control layer\nPurple = you\n\nAll roles read and write the job table and call the model server; those links are not drawn."
+    }
+  ],
+  "edges": [
+    {
+      "id": "6e15336bec816103",
+      "fromNode": "9cf342ca060bb525",
+      "toNode": "72775666ffa64239",
+      "toEnd": "arrow",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "label": "starts / queues"
+    },
+    {
+      "id": "e232a3dab54705e4",
+      "fromNode": "72775666ffa64239",
+      "toNode": "b3b3406c2f2b3f2c",
+      "toEnd": "arrow",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "label": "one model at a time"
+    },
+    {
+      "id": "93bfbb8b0c6695ff",
+      "fromNode": "e0ed9827a6c38ad2",
+      "toNode": "cae64fa6587c2e15",
+      "toEnd": "arrow",
+      "label": "clips to read"
+    },
+    {
+      "id": "05752205e1a14b1b",
+      "fromNode": "cae64fa6587c2e15",
+      "toNode": "44ee9bd73b53690a",
+      "toEnd": "arrow",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "label": "feature rows"
+    },
+    {
+      "id": "4393b3a296ed2156",
+      "fromNode": "14646e57e3b99c58",
+      "toNode": "44ee9bd73b53690a",
+      "toEnd": "arrow",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "label": "market changes"
+    },
+    {
+      "id": "6be8a4d74f88cda7",
+      "fromNode": "44ee9bd73b53690a",
+      "toNode": "0cb69ab7f5a0d02e",
+      "toEnd": "arrow",
+      "label": "winning patterns"
+    },
+    {
+      "id": "2e37499e30ac8b56",
+      "fromNode": "0cb69ab7f5a0d02e",
+      "toNode": "f9e20aa751c7987e",
+      "toEnd": "arrow",
+      "label": "scripts, hooks"
+    },
+    {
+      "id": "1c8fb400d98d0c6c",
+      "fromNode": "f9e20aa751c7987e",
+      "toNode": "2ddbd20899e47610",
+      "toEnd": "arrow",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "label": "drafts"
+    },
+    {
+      "id": "87e54b499533f249",
+      "fromNode": "2ddbd20899e47610",
+      "toNode": "8d4fc201ee9d4b09",
+      "toEnd": "arrow",
+      "label": "flagged + passed"
+    }
+  ]
+}
